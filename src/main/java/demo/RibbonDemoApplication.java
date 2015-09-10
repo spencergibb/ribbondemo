@@ -29,7 +29,6 @@ import com.netflix.loadbalancer.ServerListFilter;
 @RibbonClient(value = "ribbondemo", configuration = RibbonDemoApplication.RibbonDemoRibbonConfig.class)
 public class RibbonDemoApplication {
 
-	public static final String X_RIBBON_FILTER_PATTERN = "X-RibbonFilterPattern";
 	@Autowired
 	private RestTemplate rest;
 
