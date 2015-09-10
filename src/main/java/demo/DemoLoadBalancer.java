@@ -30,17 +30,27 @@ public class DemoLoadBalancer implements ILoadBalancer {
 		ServletRequestAttributes sra = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 		if (sra != null) {
 			HttpServletRequest req = sra.getRequest();
-			String pattern = req.getParameter("X-Ribbon-Server");
-			if (StringUtils.hasText(pattern)) {
-				List<Server> servers = getServerList(true);
-				for (Server server : servers) {
-					if (PatternMatchUtils.simpleMatch(pattern, server.getId())) {
-						return server;
-					}
+			String pattern = req.getParameter("X-Ribbon-Pattern");
+			Server server = filter(pattern);
+			if (server != null) return server;
+
+			pattern = (String) req.getSession().getAttribute("X-Ribbon-Pattern");
+			server = filter(pattern);
+			if (server != null) return server;
+		}
+		return this.delegate.chooseServer(key);
+	}
+
+	private Server filter(String pattern) {
+		if (StringUtils.hasText(pattern)) {
+			List<Server> servers = getServerList(true);
+			for (Server server : servers) {
+				if (PatternMatchUtils.simpleMatch(pattern, server.getId())) {
+					return server;
 				}
 			}
 		}
-		return this.delegate.chooseServer(key);
+		return null;
 	}
 
 	@Override

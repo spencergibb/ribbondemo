@@ -2,6 +2,11 @@ spring.application.name: ribbondemo
 
 server.port: 9091
 
+security:
+  user.password: password
+  sessions: if-required
+  ignored: /me
+
 eureka:
   password: password
   client:

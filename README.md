@@ -1,8 +1,11 @@
 # Ribbon Demo
 
+**NOTE: Authentication info `user:password`**
+
 ## Setup
 * run three instances (`--server.port=9092`, `--server.port=9093`)
 * see http://localhost:9091 rotate through
+* Run redis on localhost:6379
 
 ## service wide server list filter
 * `http --form POST :9091/env demo.filterPattern="*:*2"`
@@ -12,5 +15,13 @@
 
 ## request based filter
 
-* visit http://localhost:9091/?X-Ribbon-Server=*:*3
+* visit http://localhost:9091/?X-Ribbon-Pattern=*:*3
 * only 9093
+
+## Spring Session based filter
+* see http://localhost:9091 rotate through
+* visit http://localhost:9091/filter?pattern=*.*2
+* see http://localhost:9091 only 9092
+* open http://localhost:9091 in incognito see that it cycles through)
+
+

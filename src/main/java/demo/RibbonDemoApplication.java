@@ -7,9 +7,15 @@ import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.ribbon.RibbonClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.session.web.http.CookieHttpSessionStrategy;
+import org.springframework.session.web.http.HttpSessionStrategy;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+
+import javax.servlet.http.HttpSession;
 
 @SpringBootApplication(exclude = RibbonDemoRibbonConfig.class)
 @EnableDiscoveryClient
@@ -32,6 +38,22 @@ public class RibbonDemoApplication {
 	@RequestMapping("/me")
 	public String me() {
 		return discovery.getLocalServiceInstance().getUri().toString();
+	}
+
+	@RequestMapping("/filter")
+	public String filter(@RequestParam(value = "pattern", defaultValue = "") String pattern, HttpSession session) {
+		if (StringUtils.hasText(pattern)) {
+			session.setAttribute("X-Ribbon-Pattern", pattern);
+		} else {
+			session.removeAttribute("X-Ribbon-Pattern");
+		}
+
+		return pattern +"\n";
+	}
+
+	@Bean
+	public HttpSessionStrategy httpSessionStrategy() {
+		return new CookieHttpSessionStrategy();
 	}
 
 	@Bean
