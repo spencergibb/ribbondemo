@@ -1,5 +1,6 @@
 package demo;
 
+import com.netflix.loadbalancer.WeightedResponseTimeRule;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 
@@ -22,6 +23,13 @@ class RibbonDemoRibbonConfig {
 	@Bean
 	public ServerListFilter<Server> ribbonServerServerListFilter() {
 		return new DemoServerListFilter();
+	}
+
+	@Bean
+	public IRule ribbonRule(IClientConfig config) {
+		WeightedResponseTimeRule rule = new WeightedResponseTimeRule();
+		rule.initWithNiwsConfig(config);
+		return rule;
 	}
 
 	@Bean
